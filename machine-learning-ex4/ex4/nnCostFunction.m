@@ -62,27 +62,70 @@ Theta2_grad = zeros(size(Theta2));
 %               and Theta2_grad from Part 2.
 %
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 % -------------------------------------------------------------
 
+% 20*20 input units 
+% 25 hidden units
+% 10 output units 
+
+% Part 1:
+
+% for-loop implement:
+
+% -------------------
+
+% vertecrise implement:
+X1 = [ones(m,1),X];
+yMtrices = zeros(1,num_labels);
+for i = 1 : m,    
+    tmp = zeros(1,num_labels);
+    tmp(y(i)) += 1;
+    if i == 1,
+        yMtrices = tmp;
+    else 
+        yMtrices = [yMtrices;tmp];
+    end 
+end 
+
+Z2 = X1 * Theta1';
+tA2 = sigmoid(Z2);
+
+A2 = [ones(m,1),tA2];
+Z3 = A2 * Theta2';
+A3 = sigmoid(Z3);
+
+J = 1 / m * sum(sum((-yMtrices .* log(A3) - (1-yMtrices) .* (log(1-A3)))));
+% ----------------------
+tmp1 = Theta1;
+tmp2 = Theta2;
+
+% compute cost J should remove the bias unit 
+tmp1(:,1) = zeros(size(tmp1)(1) , 1);
+tmp2(:,1) = zeros(size(tmp2)(1) , 1);
+
+J += lambda/2/m*(sum(sum(tmp1.^2))+sum(sum(tmp2.^2)));
+
 % =========================================================================
+
+
+% Part 2 : back prop
+delta3 = A3 - yMtrices ;
+% delta3_size = size(delta3) % 5000*10
+% Theta2_size = size(Theta2) % 10*26
+% Z2_size = size(Z2) % 5000 * 25
+delta2 = (delta3 * Theta2(:,2:end)) .* [sigmoidGradient(Z2)];
+
+# remove delta0
+% Theta1_grad_size = size(Theta1_grad)
+Theta1_grad = Theta1_grad + delta2(:,1:end)' * X1 / m;
+% size(delta2(:,2:end)')
+% size(X1)
+% Theta2_grad_size = size(Theta2_grad)
+Theta2_grad = Theta2_grad + delta3(:,1:end)' * A2 / m;
+
+% Part 3: regularize gradient 
+Theta1_grad += lambda / m .* tmp1;
+Theta2_grad += lambda / m .* tmp2;
 
 % Unroll gradients
 grad = [Theta1_grad(:) ; Theta2_grad(:)];
