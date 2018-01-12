@@ -21,6 +21,7 @@ m = size(X, 1);
 error_train = zeros(m, 1);
 error_val   = zeros(m, 1);
 
+
 % ====================== YOUR CODE HERE ======================
 % Instructions: Fill in this function to return training errors in 
 %               error_train and the cross validation errors in error_val. 
@@ -52,8 +53,27 @@ error_val   = zeros(m, 1);
 %
 
 % ---------------------- Sample Solution ----------------------
+% theta = zeros(size(X,2),1);
+% [train_theta] = trainLinearReg([X], y, lambda);
+% [train_theta] = trainLinearReg([ones(i, m) X], y, lambda);
+for i = 1:m,
+    [train_theta] = trainLinearReg([X(1:i, :)], y(1:i), lambda);
 
+    [error_train(i),grad] = linearRegCostFunction(X(1:i, :), y(1:i), train_theta, 0);
 
+    [error_val(i),grad] = linearRegCostFunction(Xval, yval, train_theta, 0);
+    
+end 
+%for i=1:m
+   %利用X(1:i,:),y(1:i),trainLinearReg(),来训练参数theta
+%   theta=trainLinearReg(X(1:i,:),y(1:i), lambda);
+   %You should evaluate the training error on the first i training examples (i.e., X(1:i, :) and y(1:i)).
+   %训练误差计算只用X(1:i,:), y(1:i)
+%   [error_train(i),grad]=linearRegCostFunction(X(1:i,:), y(1:i), theta, 0); 
+   %交叉验证用上所有的验证集，即Xval, yval
+   %For the cross-validation error, you should instead evaluate on the _entire_ cross validation set (Xval and yval).
+%   [error_val(i),  grad]=linearRegCostFunction(Xval, yval, theta, 0);
+%end
 
 
 
